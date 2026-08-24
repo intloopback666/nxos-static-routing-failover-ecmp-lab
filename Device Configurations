@@ -1,0 +1,216 @@
+#SW-E
+
+conf t
+hostname SW-E
+ip routing
+
+interface Ethernet2/1
+  no switchport
+  ip address 10.14.16.4/29
+  no shutdown
+
+interface Ethernet2/2
+  no switchport
+  ip address 10.12.14.4/29
+  no shutdown
+
+interface Ethernet2/3
+  no switchport
+  ip address 10.13.14.4/29
+  no shutdown
+
+interface Ethernet2/4
+  no switchport
+  ip address 10.14.15.4/29
+  no shutdown
+
+interface loopback0
+  ip address 10.1.1.14/32
+  no shutdown
+
+end
+copy running-config startup-config
+
+ip route 192.168.10.0/24 ethernet 2/2 10.12.14.2 
+ip route 192.168.20.0/24 ethernet 2/3 10.13.14.2 
+
+copy running-config startup-config
+
+
+#SW-G
+
+conf t
+hostname SW-G
+#ip routing
+
+interface Ethernet2/1
+  no switchport
+  ip address 10.14.16.6/29
+  no shutdown
+
+interface Ethernet2/2
+  no switchport
+  ip address 10.13.16.6/29
+  no shutdown
+
+interface Ethernet2/3
+  no switchport
+  ip address 10.12.16.6/29
+  no shutdown
+
+interface Ethernet2/5
+  no switchport
+  ip address 10.15.16.6/29
+  no shutdown
+
+interface loopback0
+  ip address 10.1.1.16/32
+  no shutdown
+
+end
+copy running-config startup-config
+
+ip route 192.168.10.0/24 ethernet 2/3 10.12.16.2 
+ip route 192.168.20.0/24 ethernet 2/2 10.13.16.2 
+
+copy running-config startup-config
+
+
+#SW-C
+
+conf t
+hostname SW-C
+feature interface-vlan
+#ip routing
+
+vlan 10
+  name USERS_VLAN10
+
+interface Ethernet2/1
+  switchport
+  switchport mode access
+  switchport access vlan 10
+  no shutdown
+
+interface Ethernet2/2
+  no switchport
+  ip address 10.12.14.2/29
+  no shutdown
+
+interface Ethernet2/3
+  no switchport
+  ip address 10.12.16.2/29
+  no shutdown
+
+interface Vlan10
+  ip address 192.168.10.254/24
+  no shutdown
+
+interface loopback0
+  ip address 10.1.1.12/32
+  no shutdown
+
+end
+copy running-config startup-config
+
+
+track 16 ip route 10.12.16.6/29 reachability
+exit
+track 14 ip route 10.12.14.4/29 reachability
+exit
+
+show track
+
+ip route 0.0.0.0/0 ethernet 2/3 10.12.16.6 track 16
+ip route 0.0.0.0/0 ethernet 2/2 10.12.14.4 track 14 2
+
+show ip route
+
+
+copy running-config startup-config
+
+
+#SW-D
+
+conf t
+#hostname SW-D
+feature interface-vlan
+#ip routing
+
+vlan 20
+  name USERS_VLAN20
+
+interface Ethernet2/1
+  switchport
+  switchport mode access
+  switchport access vlan 20
+  no shutdown
+
+interface Ethernet2/2
+  no switchport
+  ip address 10.13.16.3/29
+  no shutdown
+
+interface Ethernet2/3
+  no switchport
+  ip address 10.13.14.3/29
+  no shutdown
+
+interface Vlan20
+  ip address 192.168.20.254/24
+  no shutdown
+
+interface loopback0
+  ip address 10.1.1.13/32
+  no shutdown
+
+end
+copy running-config startup-config
+
+
+ip route 0.0.0.0/0 ethernet 2/2 10.13.16.6 
+ip route 0.0.0.0/0 ethernet 2/3 10.13.14.4 
+
+show ip route
+
+copy running-config startup-config
+
+
+
+#SW-F
+
+conf t
+#hostname SW-F
+feature interface-vlan
+#ip routing
+
+vlan 30
+  name USERS_VLAN30
+
+interface Ethernet2/1
+  switchport
+  switchport mode access
+  switchport access vlan 30
+  no shutdown
+
+interface Ethernet2/4
+  no switchport
+  ip address 10.14.15.5/29
+  no shutdown
+
+interface Ethernet2/5
+  no switchport
+  ip address 10.15.16.5/29
+  no shutdown
+
+interface Vlan30
+  ip address 192.168.3.254/24
+  no shutdown
+
+interface loopback0
+  ip address 10.1.1.15/32
+  no shutdown
+
+end
+copy running-config startup-config
+
